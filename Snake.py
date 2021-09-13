@@ -1,4 +1,5 @@
 import random
+import time
 import arcade
 
 class Apple(arcade.Sprite):
@@ -57,10 +58,7 @@ class Snake(arcade.Sprite):
         elif food == 'cactus':
             self.score -= 1
             self.body.pop()
-
-
-    
-
+  
 class My_game_window(arcade.Window):
     def __init__(self):
         arcade.Window.__init__(self,self.width,self.height,"snake game")
@@ -79,24 +77,32 @@ class My_game_window(arcade.Window):
          arcade.draw_text(
              f"{self.snake.score}",20,400,arcade.color.YELLOW,28
          )
+         if self.snake.score < 0 or self.snake.center_x < 0 or self.snake.center_x > self.width or self.snake.center_y > self.height:
+            arcade.draw_text(
+                f"{self.snake.score}",20,400,arcade.color.RED,28
+                )
+            time.sleep(1000)
+            exit()
 
     def on_update(self, delta_time: float):
         self.snake.move()
         if arcade.check_for_collision(self.snake, self.flower):
             self.snake.eat("flower")
-            self.flower = Flower(500,550)
+            self.flower = Flower(200,200)
             print(self.snake.score)
             
         elif arcade.check_for_collision(self.snake, self.apple):
             self.snake.eat("apple")
-            self.apple = Apple(500,550)
+            self.apple = Apple(200,200)
             print(self.snake.score)
            
         elif arcade.check_for_collision(self.snake, self.cactus):
             self.snake.eat("cactus")
-            self.cactus = Cactus(500,550)
+            self.cactus = Cactus(200,200)
             print(self.snake.score)
-           
+
+        
+
     def on_key_release(self,key,nodifiers):
         if key==arcade.key.LEFT:
             self.snake.change_x=-1
@@ -105,7 +111,7 @@ class My_game_window(arcade.Window):
         elif key==arcade.key.RIGHT:
             self.snake.change_x=1
             self.snake.change_y=0
-        
+    
         elif key==arcade.key.UP:
             self.snake.change_x=0
             self.snake.change_y=1
@@ -117,7 +123,6 @@ class My_game_window(arcade.Window):
         else:
             print("Button that pressure is not defined!")
             
-
 class Flower(arcade.Sprite):
     def __init__(self,w,h):
             arcade.Sprite.__init__(self)
