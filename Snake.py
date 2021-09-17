@@ -29,12 +29,18 @@ class Snake(arcade.Sprite):
         self.change_y = 0
         self.score = 0
         self.body =[]
-        self.body.append([self.center_x,self.center_y])
-
+        
 
     def draw(self):
-        for i in range(len(self.body)):
-            arcade.draw_circle_filled(self.center_x,self.center_y,self.r,self.color)
+        arcade.draw_circle_filled(self.center_x,self.center_y,self.width,self.height,self.r,self.color)
+        # self.body.append([self.center_x,self.center_y])
+        i=0
+       
+        for i in self.body:
+            # arcade.draw_circle_filled(self.center_x,self.center_y,self.r,self.color)
+            i+=1
+        # if len(self.body) > len(self.body) :
+        #     self.body.pop(0)
 
     def move(self):
         for i in range(len(self.body)-1, 0, -1):
@@ -50,24 +56,26 @@ class Snake(arcade.Sprite):
     def eat(self, food):
         if food == 'apple':
             self.score += 1
-            self.body.append([self.body[len(self.body)-1][0]+3000, self.body[len(self.body)-1][1]])
+            self.body[len(self.body)-1][0]+3000, self.body[len(self.body)-1][1]
         elif food == 'flower':
             self.score += 2
-            self.body.append([self.body[len(self.body)-1][0]+3000, self.body[len(self.body)-1][1]])
-            self.body.append([self.body[len(self.body)-1][0]+3000, self.body[len(self.body)-1][1]])
+            self.body[self.body[len(self.body)-1][0]+3000, self.body[len(self.body)-1][1]]
+            self.body[self.body[len(self.body)-1][0]+3000, self.body[len(self.body)-1][1]]
         elif food == 'cactus':
             self.score -= 1
             self.body.pop()
-  
+
 class My_game_window(arcade.Window):
     def __init__(self):
         arcade.Window.__init__(self,self.width,self.height,"snake game")
         arcade.set_background_color(arcade.color.GRAY)
         self.snake=Snake(700,750) 
-        self.apple = Apple(500,550)
-        self.flower = Flower(500,550)
-        self.cactus = Cactus(500,550)
-        
+        self.apple = Apple(200,200)
+        self.flower = Flower(200,200)
+        self.cactus = Cactus(200,200)
+        self.body=0
+        self.exit=0
+
     def on_draw(self):
          arcade.start_render()
          self.snake.draw()
@@ -77,30 +85,39 @@ class My_game_window(arcade.Window):
          arcade.draw_text(
              f"{self.snake.score}",20,400,arcade.color.YELLOW,28
          )
-         if self.snake.score < 0 or self.snake.center_x < 0 or self.snake.center_x > self.width or self.snake.center_y > self.height:
-            arcade.draw_text(
-                f"{self.snake.score}",20,400,arcade.color.RED,28
-                )
-            time.sleep(1000)
-            exit()
+        #  if self.snake.score < 0 or self.snake.center_x < 0 or self.snake.center_x > self.width or self.snake.center_y > self.height :
+        #     arcade.draw_text(
+        #         "GAME OVER",10,40,arcade.color.RED,28
+        #         )
+        #     time.sleep(2)
+        #     return  
+        
+         if self.body == 1:
+            if self.snake.score <= 0:
+                arcade.draw_text("Game Over!", 230, 200, arcade.color.RED, 40)
+                self.exit = 1
+
+         if (600 <= self.snake.center_x + self.snake.r) or (0 >= self.snake.center_x - self.snake.r) or (400 <= self.snake.center_y + self.snake.r) or (0 >= self.snake.center_y - self.snake.r):
+            arcade.draw_text("Game Over!", 230, 200, arcade.color.RED, 40)
+            self.exit = 1              
 
     def on_update(self, delta_time: float):
         self.snake.move()
         if arcade.check_for_collision(self.snake, self.flower):
             self.snake.eat("flower")
-            self.flower = Flower(200,200)
+            self.flower = Flower(100,100)
             print(self.snake.score)
             
         elif arcade.check_for_collision(self.snake, self.apple):
             self.snake.eat("apple")
-            self.apple = Apple(200,200)
+            self.apple = Apple(100,100)
             print(self.snake.score)
            
         elif arcade.check_for_collision(self.snake, self.cactus):
             self.snake.eat("cactus")
-            self.cactus = Cactus(200,200)
+            self.cactus = Cactus(100,50)
             print(self.snake.score)
-
+        
         
 
     def on_key_release(self,key,nodifiers):
@@ -149,5 +166,8 @@ class Cactus(arcade.Sprite):
     def draw(self):
         arcade.draw_circle_filled(self.center_x,self.center_y,self.r,self.color)   
 
+
+width = 600
+height = 400
 game=My_game_window()
 arcade.run()
